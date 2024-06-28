@@ -12,7 +12,7 @@ const DomainRow = ({owner, domain, icon}) => {
         <img src={icon} className="h-10"/>
        )}
         <div>
-          <Link href={'/domains/'+ domain} className="font-bold text-xl leading-4">{domain}</Link>
+          <Link href={'/domains/'+ domain} className="font-bold text-xl leading-5 block">{domain}</Link>
       
       {keywords.map(keyword=>(
         <>
