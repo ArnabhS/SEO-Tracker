@@ -4,6 +4,7 @@ import DoubleHeader from '@/components/DoubleHeader';
 import KeywordRow from '@/components/KeywordRow';
 import NewKeywordForm from '@/components/NewKeywordForm';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -12,6 +13,7 @@ const MySwal = withReactContent(Swal);
 const DomainPage = (props) => {
   const [keywords,setKeywords]=useState([])
   const [loading, setLoading]=  useState(false)
+  const router = useRouter();
     const domain = props.params.domain;
     useEffect(() => {
       fetchKeywords();
@@ -24,6 +26,13 @@ const DomainPage = (props) => {
         setLoading(false);
       });
     }
+
+    function deleteDomain() {
+      axios.delete('/api/domains?domain='+domain).then(() => {
+        router.push('/');
+      });
+    }
+
     function showDeletePopup() {
       MySwal.fire({
         title: 'Delete?',

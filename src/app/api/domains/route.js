@@ -51,3 +51,12 @@ async function getIconUrl(domain) {
     
     return Response.json({domains});
   }
+
+  export async function DELETE(req) {
+    mongoose.connect(process.env.MONGODB_URI);
+    const url = new URL(req.url);
+    const domain = url.searchParams.get('domain');
+    const session = await getServerSession(authOptions);
+    await Domain.deleteOne({owner:session.user?.email,domain});
+    return Response.json(true);
+  }
