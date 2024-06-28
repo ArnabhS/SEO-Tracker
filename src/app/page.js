@@ -7,6 +7,7 @@ import axios from "axios";
 
 export default function Home() {
   const [domains, setDomains]=useState([]);
+  const [keywords, setKeywords]= useState([])
   const [loading,setLoading] = useState(false);
   useEffect(()=>{
       
@@ -16,6 +17,7 @@ export default function Home() {
     setLoading(true);
     axios.get('/api/domains').then(res => {
       setDomains(res.data.domains);
+      setKeywords(res.data.keywords)
       setLoading(false);
     });
   }
@@ -27,7 +29,7 @@ export default function Home() {
         <div>Loading...</div>
       )}
       {!loading && (
-        <DomainList domains={domains} />
+        <DomainList domains={domains} keywords={keywords} />
       )}
     </div>
   );

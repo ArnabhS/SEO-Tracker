@@ -54,7 +54,10 @@ const DomainPage = (props) => {
   return (
     <div>
       <div className="flex items-end">
-        <DoubleHeader preTitle='Domains' mainTitle={domain} />
+        <DoubleHeader 
+        preTitle='Domains' 
+        preTitleLink={'/'}
+        mainTitle={domain} />
         <div className="p-2">
           <DeleteButton onClick={showDeletePopup} />
         </div>
@@ -66,7 +69,9 @@ const DomainPage = (props) => {
          {!loading && keywords.map(keyword => (
         <KeywordRow {...keyword}/>
       ))}
-     
+       {!loading && !keywords?.length && (
+        <div>No keywords found :(</div>
+      )}
     </div>
   )
 }

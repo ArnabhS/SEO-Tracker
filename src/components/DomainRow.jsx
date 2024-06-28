@@ -1,10 +1,8 @@
 import Link from 'next/link'
 import React from 'react'
 
-const DomainRow = ({owner, domain, icon}) => {
-    const keywords=[
-        'github', 'git', 'copilot','repo ', 'open source'
-      ]
+const DomainRow = ({owner, domain, icon, keywords}) => {
+    
   return (
     <div>
           <div className="flex gap-8 bg-white border border-blue-200 border-b-4 p-4 rounded-lg items-center">
@@ -14,11 +12,11 @@ const DomainRow = ({owner, domain, icon}) => {
         <div>
           <Link href={'/domains/'+ domain} className="font-bold text-xl leading-5 block">{domain}</Link>
       
-      {keywords.map(keyword=>(
+      {keywords.map(keywordDoc=>(
         <>
-        <span className="bg-slate-200 inline-block m-1 p-1 rounded-md text-xs text-gray-500">
-          {keyword}
-        </span>
+        <Link href={'/domains/'+domain+'/'+decodeURIComponent(keywordDoc.keyword)} className="bg-slate-200 inline-block m-1 p-1 rounded-md text-xs text-gray-500">
+          {keywordDoc.keyword}
+        </Link>
         </>
        ))}
       </div>

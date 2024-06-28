@@ -30,3 +30,13 @@ export async function GET(req){
     await Keyword.find({domain})
    )
 }
+
+export async function DELETE(req) {
+    const url = new URL(req.url);
+    const domain = url.searchParams.get('domain');
+    const keyword = url.searchParams.get('keyword');
+    mongoose.connect(process.env.MONGODB_URI);
+    const session = await getServerSession(authOptions);
+    await Keyword.deleteOne({domain,keyword,owner:session.user.email});
+    return Response.json(true);
+  }
