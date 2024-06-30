@@ -2,7 +2,8 @@ import { Keyword } from "@/models/keyword.model.js";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth].js";
-
+import {doGoogleSearch} from "@/lib/rankingFunctions";
+import { Result } from "@/models/result.model.js";
 export async function POST(req){
     mongoose.connect(process.env.MONGODB_URI);
     console.log("DB connected");
@@ -13,6 +14,12 @@ export async function POST(req){
         keyword:data.keyword,
         owner:session.user.email
     })
+    const responseId = await doGoogleSearch(data.keyword);
+    await Result.create({
+        domain: data.domain,
+        keyword: data.keyword,
+        brightDataResponseId: responseId,
+      });
     return Response.json(keywordDoc)
 }
 
