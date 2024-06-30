@@ -13,6 +13,7 @@ const MySwal = withReactContent(Swal);
 const DomainPage = (props) => {
   const [keywords,setKeywords]=useState([])
   const [loading, setLoading]=  useState(false)
+  const [results,setResults] = useState([]);
   const router = useRouter();
     const domain = props.params.domain;
     useEffect(() => {
@@ -21,8 +22,8 @@ const DomainPage = (props) => {
     function fetchKeywords() {
       setLoading(true);
       axios.get('/api/keywords?domain='+domain).then(response => {
-        setKeywords(response.data);
-    
+        setKeywords(response.data.keywords);
+        setResults(response.data.results);
         setLoading(false);
       });
     }
@@ -63,11 +64,10 @@ const DomainPage = (props) => {
         </div>
         </div>
         <NewKeywordForm domain={domain} onNew={()=>{}}/>
-        {loading &&(
-            <div>Loading... </div>
-          )}
-         {!loading && keywords.map(keyword => (
-        <KeywordRow {...keyword}/>
+        {!loading && keywords.map(keywordDoc => (
+        <KeywordRow {...keywordDoc}
+                    key={keywordDoc._id}
+                    results={results.filter(r => r.keyword === keywordDoc.keyword)} />
       ))}
        {!loading && !keywords?.length && (
         <div>No keywords found :(</div>

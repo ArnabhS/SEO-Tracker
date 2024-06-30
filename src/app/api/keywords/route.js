@@ -25,17 +25,24 @@ export async function POST(req){
 
 export async function GET(req){
     const url = new URL(req.url);
-    const domain = url.searchParams.get('domain');
-    console.log("domain", domain)
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log("DB connected")
-    const session = await getServerSession(authOptions);
+  const domain = url.searchParams.get('domain');
+  const keyword = url.searchParams.get('keyword');
+  mongoose.connect(process.env.MONGODB_URI);
+  const session = await getServerSession(authOptions);
+  const keywordsDocs = await Keyword.find(
+    keyword
+      ? {domain,keyword,owner:session.user.email}
+      : {domain,owner:session.user.email}
+  );
+  const resultsDocs = await Result.find({
+    domain,
+    keyword:keywordsDocs.map(doc => doc.keyword)
+  });
+  return Response.json({
+    keywords: keywordsDocs,
+    results: resultsDocs,
+  });
    
-    console.log(url,'URL')
- 
-   return Response.json(
-    await Keyword.find({domain})
-   )
 }
 
 export async function DELETE(req) {
