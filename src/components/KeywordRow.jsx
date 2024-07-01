@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
+import Chart from './Chart'
 
 const KeywordRow = ({keyword,owner,domain,results}) => {
 
@@ -29,12 +30,15 @@ const KeywordRow = ({keyword,owner,domain,results}) => {
        href={`/domains/`+domain+`/`+encodeURIComponent(keyword) }
        className='font-bold grow block'>{keyword}</Link>
       
-       <div className='bg-green-100 w-48 h-[64px]'>
+       <div className='bg-green-100 w-[300px] h-[64px]'>
         {!latestResult &&(
           <div>Loading... </div>
         ) }
        {latestResult && (
-        <div>{latestRank} </div>
+        <div><Chart results={results} width={300} /> </div>
+        
+        
+    
        )}
        </div>
         
