@@ -5,6 +5,7 @@ import { authOptions } from "../auth/[...nextauth].js"
 import { DOMParser } from 'dom-parser';
 import axios from "axios";
 import { Keyword } from "@/models/keyword.model.js";
+import { Result } from "@/models/result.model.js";
 
 async function getIconUrl(domain) {
     const response = await axios.get(`https://`+domain);
@@ -54,8 +55,11 @@ async function getIconUrl(domain) {
         domain: domains.map(doc=> doc.domain)
       
       })
-    
-    return Response.json({domains, keywords});
+      const results = await Result.find({
+        domain:domains.map(doc => doc.domain),
+        keyword:keywords.map(doc => doc.keyword)
+      });
+    return Response.json({domains, keywords, results});
   }
 
   export async function DELETE(req) {

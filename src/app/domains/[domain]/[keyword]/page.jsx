@@ -1,9 +1,11 @@
 'use client'
 
+import Chart from "@/components/Chart";
 import DeleteButton from "@/components/DeleteButton";
 import DoubleHeader from "@/components/DoubleHeader";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 const MySwal = withReactContent(Swal);
@@ -13,6 +15,11 @@ export default function KeywordPage(props){
     const urlParams='?domain='+domain+'&keyword='+ encodeURIComponent(keyword)
     const url='/api/keywords'+urlParams
     const router=useRouter()
+    const [results,setResults] = useState([]);
+    useEffect(() => {
+      axios.get('/api/keywords?keyword='+keyword+'&domain='+domain)
+        .then(response => setResults(response.data.results));
+    }, []);
     async function deleteKeyword(){
        await axios.delete(url ).then(() => {
          router.push('/domains/'+domain);
@@ -48,7 +55,7 @@ export default function KeywordPage(props){
             <DeleteButton onClick={showDeletePopup}/>    
             </div>   
             </div>
-            <div className="bg-green-300 h-36"></div>
+           <Chart width={'100%'} results={results}/>
         </div>
     )
 }

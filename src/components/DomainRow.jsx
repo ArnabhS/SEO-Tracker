@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import React from 'react'
+import Chart from './Chart'
 
-const DomainRow = ({owner, domain, icon, keywords}) => {
+const DomainRow = ({owner, domain, icon, keywords, results}) => {
     
   return (
     <div>
@@ -21,7 +22,7 @@ const DomainRow = ({owner, domain, icon, keywords}) => {
        ))}
       </div>
       <div>
-        <div className="bg-green-200 w-36 h-20"></div>
+        <Chart width={200} results={results}/>
       </div>
     </div>
     </div>
