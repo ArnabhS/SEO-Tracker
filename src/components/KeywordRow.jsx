@@ -1,49 +1,65 @@
-import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
-import Chart from './Chart'
+import axios from "axios";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import Chart from "./Chart";
 
-const KeywordRow = ({keyword,owner,domain,results}) => {
+export default function KeywordRow({ keyword, domain, results: defaultResults }) {
+  const resultsRef = useRef(defaultResults || []);
+  const isCompleteRef = useRef(resultsRef.current.filter(r => r.complete).length > 0);
+  const rankExistsRef = useRef(resultsRef.current.filter(r => r.rank).length > 0);
+  const [isComplete, setIsComplete] = useState(isCompleteRef.current);
+  const [rankExists, setRankExists] = useState(rankExistsRef.current);
+  const [rank, setRank] = useState(rankExistsRef.current ? resultsRef.current.find(r => r.rank)?.rank : null);
 
-  const latestResult=results.reverse()[0]
-  const [latestRank, setLatestRank]=useState(results.reverse()[0].rank)
-  useEffect(()=>{
-     setTimeout(checkRank, 3000); 
-  },[latestRank])
-  
-  function checkRank(){
-    if(!latestRank){
-      const url='/api/results?id='+latestResult.rank.brightDataResponseId
-      axios.get(url).then(response =>{
-        const newRank=response.data.rank
-        if(newRank){
-          setLatestRank(newRank)
+  useEffect(() => {
+    reFetchResultIfNoRank();
+  }, []);
+
+  function reFetchResultIfNoRank() {
+    if (!isCompleteRef.current) {
+      axios.get(`/api/results?domain=${domain}&keyword=${keyword}`).then(res => {
+        resultsRef.current = res.data;
+        isCompleteRef.current = res.data.filter(r => r.complete).length > 0;
+        rankExistsRef.current = res.data.filter(r => r.rank).length > 0;
+        setRankExists(rankExistsRef.current);
+        setIsComplete(isCompleteRef.current);
+        if (rankExistsRef.current) {
+          setRank(res.data.find(r => r.rank)?.rank);
         }
-        else{
-          setTimeout(checkRank, 3000);
-        }
-      })
+      });
+      setTimeout(() => {
+        reFetchResultIfNoRank();
+      }, 3000);
     }
   }
-  return (
-    <div className='flex gap-2 bg-white border border-blue-200 border-b-4 pr-0 rounded-lg items-center my-3'>
-       <Link
-       href={`/domains/`+domain+`/`+encodeURIComponent(keyword) }
-       className='font-bold grow block'>{keyword}</Link>
-      
-       <div className='bg-green-100 w-[300px] h-[64px]'>
-        {!latestResult &&(
-          <div>Loading... </div>
-        ) }
-       {latestResult && (
-        <div><Chart results={results} width={300} /> </div>
-        
-        
-    
-       )}
-       </div>
-        
-        </div>
-  )
-}
 
-export default KeywordRow
+  return (
+    <div className="flex gap-2 bg-white border border-blue-200 border-b-4 pr-0 rounded-lg items-center my-3">
+      <Link
+        href={'/domains/' + domain + '/' + encodeURIComponent(keyword)}
+        className="font-bold grow block p-4"
+      >
+        {keyword}
+      </Link>
+      <div>
+        <div className="min-h-[80px] w-[300px] flex items-center">
+          {!rankExists && (
+            <div className="block text-center w-full">
+              {isComplete === true ? (
+                <div>Not in top 100 :(</div>
+              ) : (
+                <div>Checking rank...</div>
+              )}
+            </div>
+          )}
+          {rankExists && (
+            <div className="pt-2">
+              {/* <div>Rank: {rank}</div> */}
+              <Chart results={resultsRef.current} width={300} />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
