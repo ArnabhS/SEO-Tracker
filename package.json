@@ -12,6 +12,7 @@
     "@auth/mongodb-adapter": "^3.4.1",
     "axios": "^1.7.2",
     "dom-parser": "^1.1.5",
+    "jsdom": "^24.1.0",
     "lodash": "^4.17.21",
     "mongodb": "^6.7.0",
     "mongoose": "^8.4.4",

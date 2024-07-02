@@ -2,28 +2,35 @@ import { Domain } from "@/models/domain.model";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth].js"
-import { DOMParser } from 'dom-parser';
+import { JSDOM } from 'jsdom';
 import axios from "axios";
 import { Keyword } from "@/models/keyword.model.js";
 import { Result } from "@/models/result.model.js";
 
 async function getIconUrl(domain) {
-    const response = await axios.get(`https://`+domain);
-    const parser = new DOMParser();
-    const parsedHTML = parser.parseFromString(response.data, 'text/html');
-    const links = parsedHTML.getElementsByTagName('link');
+  try {
+    const response = await axios.get(`https://${domain}`);
+    const dom = new JSDOM(response.data);
+    const links = dom.window.document.getElementsByTagName('link');
     let href = '';
+
     for (const link of links) {
-      const rel = link.attributes?.find(a => a.name === 'rel')?.value || '';
+      const rel = link.getAttribute('rel') || '';
       if (rel.includes('icon')) {
-        href = link.attributes?.find(a => a.name === 'href')?.value;
+        href = link.getAttribute('href');
+        if (href) break;
       }
     }
+
     if (href.includes('://')) {
       return href;
     } else {
-      return `https://` + domain + href;
+      return `https://${domain}${href.startsWith('/') ? '' : '/'}${href}`;
     }
+  } catch (error) {
+    console.error('Error fetching icon URL:', error);
+    return '';
+  }
   }
 
   export async function POST(req) {
@@ -41,6 +48,7 @@ async function getIconUrl(domain) {
       owner: session?.user?.email,
       icon,
     });
+    console.log(doc, doc)
     return Response.json(doc);
   }
 
