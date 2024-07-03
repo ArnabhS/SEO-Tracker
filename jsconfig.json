@@ -3,5 +3,8 @@
     "paths": {
       "@/*": ["./src/*"]
     }
-  }
+  },
+  "include": [
+    "./src/app/api/auth/[...nextauth]/route.js"
+  ]
 }
