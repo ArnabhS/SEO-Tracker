@@ -1,7 +1,7 @@
 import { Domain } from "@/models/domain.model";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth].js"
+import { authOptions } from "../auth/[...nextauth]/route.js"
 import { JSDOM } from 'jsdom';
 import axios from "axios";
 import { Keyword } from "@/models/keyword.model.js";

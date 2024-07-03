@@ -1,7 +1,7 @@
 import { Keyword } from "@/models/keyword.model.js";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth].js";
+import { authOptions } from "../auth/[...nextauth]/route.js";
 import {doGoogleSearch} from "@/lib/rankingFunctions";
 import { Result } from "@/models/result.model.js";
 export async function POST(req){

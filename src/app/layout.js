@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 import Login from "./Login";
 import Header from "./Header";
 
